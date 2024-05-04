@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=CommandProtocol
+comment1.params=command
+comment1.target=java.lang.String\ processCommand(Command)
+comment1.text=\r\n\ processCommand\ -\ run\ the\ command\ of\ the\ input\ and\ mutate\ the\ commands\ response\r\n\ @param\ command\ -\ the\ command\ to\ process\r\n\ @return\ -\ the\ mutated\ command\ \r\n
+comment2.params=appName
+comment2.target=boolean\ openApp(java.lang.String)
+comment2.text=\r\n\ openApp\ -\ open\ the\ app\ of\ the\ commands\ instructions\ on\ the\ client\ side\r\n\ @param\ appName\ -\ the\ name\ of\ the\ app\ to\ open\r\n\ @return\ -\ true\ if\ executed\ false\ if\ not\r\n
+comment3.params=
+comment3.target=java.lang.String\ status_check()
+comment3.text=\r\n\ status_check\ -\ sends\ the\ clients\ OS\ and\ uptime\ status\ to\ the\ server\r\n\ @return\ -\ true\ if\ executed\ false\ if\ not\r\n
+numComments=4

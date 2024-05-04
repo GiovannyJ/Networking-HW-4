@@ -1,0 +1,13 @@
+#BlueJ class context
+comment0.target=BotnetServer
+comment1.params=socket
+comment1.target=BotnetServer(java.net.Socket)
+comment2.params=commandName
+comment2.target=Command\ create_command(java.lang.String)
+comment2.text=\r\n\ create_command\r\n\ @param\ commandName\ -\ name\ of\ the\ command\ to\ construct\r\n\ @return\ -\ command\ constructed\ with\ instructions\ to\ send\ to\ Client\r\n
+comment3.params=
+comment3.target=void\ run()
+comment3.text=\r\n\ run\ -\ runs\ the\ app\r\n
+comment4.params=args
+comment4.target=void\ main(java.lang.String[])
+numComments=5

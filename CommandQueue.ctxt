@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=CommandQueue
+comment1.params=
+comment1.target=Command\ take()
+comment2.params=command
+comment2.target=void\ put(Command)
+numComments=3

@@ -1,10 +1,10 @@
 server:
-	javac BotnetServer.java Command.java CommandProtocol.java
+	javac BotnetMultiServer.java BotnetServerThread.java Command.java CommandProtocol.java CommandQueue.java
 runserver:
-	java -cp . .\BotnetServer.java 2002
+	java -cp . .\BotnetMultiServer.java 2002
 
 client:
-	javac BotnetClient.java Command.java CommandProtocol.java
+	javac BotnetClient.java Command.java CommandProtocol.java CommandQueue.java
 
 runclient:
 	java -cp . .\BotnetClient.java localhost 2002

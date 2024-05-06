@@ -13,6 +13,7 @@ public class Command implements Serializable{
     private String response = "";
     private Boolean error = false;
     private Boolean isExecuted = false;
+    private int timeToLive;
 
     /**
      * Constructor
@@ -39,6 +40,9 @@ public class Command implements Serializable{
     public Boolean getIsExecuted(){
         return this.isExecuted;
     }
+    public int getTimeToLive(){
+        return this.timeToLive;
+    }
 
     /**
      * Setters
@@ -63,5 +67,17 @@ public class Command implements Serializable{
     }
     public void setIsExecutedFalse(){
         this.isExecuted=false;
+    }
+    public void setTimeToLive(int time){
+        this.timeToLive = time;
+    }
+
+
+    public void reduceTimeToLive(){
+        if (this.timeToLive >= 1){
+            this.timeToLive -= 1;
+        }else{
+            this.timeToLive = 0;
+        }
     }
 }

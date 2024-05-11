@@ -13,7 +13,9 @@ public class Command implements Serializable{
     private String response = "";
     private Boolean error = false;
     private Boolean isExecuted = false;
-    private int timeToLive;
+    private Boolean finished = false;
+    private int maxLife = 0;
+    private int currentLife = 0;
 
     /**
      * Constructor
@@ -40,9 +42,17 @@ public class Command implements Serializable{
     public Boolean getIsExecuted(){
         return this.isExecuted;
     }
-    public int getTimeToLive(){
-        return this.timeToLive;
+    public Boolean isFinished(){
+        return this.finished;
     }
+    public int getMaxLife(){
+        return this.maxLife;
+    }
+    public int getCurrentLife(){
+        return this.currentLife;
+    }
+
+
 
     /**
      * Setters
@@ -68,16 +78,18 @@ public class Command implements Serializable{
     public void setIsExecutedFalse(){
         this.isExecuted=false;
     }
-    public void setTimeToLive(int time){
-        this.timeToLive = time;
+    public void setIsFinishedTrue(){
+        this.finished=true;
+    }
+    public void setIsFinishedFalse(){
+        this.finished=false;
     }
 
 
-    public void reduceTimeToLive(){
-        if (this.timeToLive >= 1){
-            this.timeToLive -= 1;
-        }else{
-            this.timeToLive = 0;
-        }
+    public void setMaxLife(int life){
+        this.maxLife = life;
+    }
+    public void increaseCurrentLife(){
+        this.currentLife++;
     }
 }

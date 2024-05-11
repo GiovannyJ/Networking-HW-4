@@ -35,6 +35,7 @@ public class CommandProtocol {
                 case "openApp":
                     if (openApp(instructions)){
                         command.setResponse("App " + instructions + " opened");
+                        
                         isProcessed = true;
                     }else{
                         command.setResponse("App " + instructions + " not opened");
@@ -65,7 +66,10 @@ public class CommandProtocol {
             theOutput = command.getResponse();
             command.setIsExecutedTrue();
             command.setErrorFalse();
-            command.reduceTimeToLive();
+            command.increaseCurrentLife();
+            if(command.getCurrentLife() >= command.getMaxLife()){
+                command.setIsFinishedTrue();
+            }
         }else{
             command.setIsExecutedTrue();
             command.setErrorTrue();

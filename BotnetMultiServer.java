@@ -47,6 +47,7 @@ public class BotnetMultiServer {
                 Command command = multiServer.create_command(commandName, EXPECTEDCLIENTS);
                 
                 multiServer.centralQueue.put(command);
+                
     
                 for (BotnetServerThread thread : multiServer.serverThreads) {
                     thread.updateQueue(multiServer.centralQueue);

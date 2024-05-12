@@ -57,6 +57,7 @@ public class BotnetServerThread extends Thread{
             //*If the output is bye close connection */
             if (inCommand.getResponse().equalsIgnoreCase("exiting")){
                 System.out.println("[+]Closing connection");
+                this.status = false;
                 socket.close();
                 in.close();
                 out.close();

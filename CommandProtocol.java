@@ -21,9 +21,9 @@ public class CommandProtocol {
      * @param command - the command to process
      * @return - the mutated command 
      */
-    public String processCommand(Command command){    
+    public void processCommand(Command command){    
         Boolean isProcessed = false;
-        String theOutput = null;
+        // String theOutput = null;
 
         if (state == WAITING){
             command.setResponse("Connected");;
@@ -63,7 +63,7 @@ public class CommandProtocol {
         }
 
         if (isProcessed){
-            theOutput = command.getResponse();
+            // theOutput = command.getResponse();
             command.setIsExecutedTrue();
             command.setErrorFalse();
             command.increaseCurrentLife();
@@ -75,7 +75,7 @@ public class CommandProtocol {
             command.setErrorTrue();
         }
         
-        return theOutput;
+        // return theOutput;
     }
 
     /**

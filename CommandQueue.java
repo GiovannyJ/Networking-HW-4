@@ -2,48 +2,63 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class CommandQueue implements Serializable{
+public class CommandQueue implements Serializable {
     private List<Command> commandList = new ArrayList<>();
-    
 
     public synchronized Command take() {
-        // System.out.println("in the take method");
-        // System.out.println("CURRENT COMMAND LIST IN TAKE " + this.commandList);
         while (this.commandList.isEmpty()) {
             try {
                 wait();
             } catch (InterruptedException e) {}
         }
-        
-        notifyAll();
 
-        // if(this.commandList.get(0).getIsExecuted() && this.commandList.size() > 1){
-        //     this.commandList.remove(0);
-        // }
-
-        //FIND A WAY TO SYNC THE COMMANDS SO THAT IT GOES THROUGH ALL CLIENTS AND THEN GETS REMOVED
-        if(this.commandList.get(0).isFinished()){
+        if (this.commandList.get(0).isFinished()) {
+            // System.out.println("[+]TEEHEE");
             this.commandList.remove(0);
+            notifyAll();
+            if (this.commandList.isEmpty()) {
+                return null;
+            }
         }
+
         return this.commandList.get(0);
-        
     }
 
-    public synchronized void put(Command command){
-        // System.out.println("in the put method");
-        // System.out.println("CURRENT COMMAND LIST IN PUT "+this.commandList);
-        // System.out.println("empty list status " + emptyList);
-        
-        // while (!this.commandList.isEmpty()){
-        //     try{
-        //         wait();
-        //     } catch (InterruptedException e){}
-        // }
-
-        
+    public synchronized void put(Command command) {
         this.commandList.add(command);
-        // System.out.println("COMMANDS IN THE QUEUE: " + this.commandList);
+        // System.out.println(this.commandList);
         notifyAll();
+    }
+
+    public synchronized void putBack(Command command) {
+        this.commandList.remove(0);
+        this.commandList.add(0, command);
+        // System.out.println(this.commandList);
+        notifyAll();
+    }
+
+
+    public void status_of_queue(){
+        for (Command command : this.commandList) {
+            System.out.println(command.getCommandName());
+            System.out.println(command.getCurrentLife());
+            System.out.println(command.isFinished());
+        }
+    }
+
+    public synchronized boolean isEmpty() {
+        return this.commandList.isEmpty();
+    }
+
+    public synchronized Command peek() {
+        return this.commandList.isEmpty() ? null : this.commandList.get(0);
+    }
+
+    public synchronized void removeFirst(){
+        this.commandList.remove(0);
+    }
+
+    public int size(){
+        return this.commandList.size();
     }
 }

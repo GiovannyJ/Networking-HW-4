@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=BotnetMultiServer
+comment0.text=\r\n\ BotnetMutliServer\ Class\:\r\n\ User\ facing\ object\ used\ to\ create\ and\ send\ command\ objects\ to\ server\ thread\r\n
+comment1.params=args
+comment1.target=void\ main(java.lang.String[])
+comment2.params=commandName\ timeToLive
+comment2.target=Command\ create_command(java.lang.String,\ int)
+comment2.text=\r\n\ create_command\:\ creates\ a\ command\ object\ with\ instructions\ according\ to\ name\ and\ time\ to\ live\r\n\ @param\ commandName\:\ the\ name\ of\ the\ command\ -\ will\ be\ translated\ to\ proper\ name\ for\ protocol\r\n\ @param\ timeToLive\:\ the\ amount\ of\ clients\ that\ need\ to\ run\ this\ command\ before\ it\ is\ removed\ from\ the\ queue\r\n\ @return\:\ new\ command\ object\r\n
+numComments=3

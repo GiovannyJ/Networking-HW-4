@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=BotnetServerThread
+comment0.text=\r\n\ BotnetServer\ Class\:\r\n\ Handles\ communication\ between\ client\ and\ server\ as\ a\ subsection\ of\ the\ server\r\n
+comment1.params=socket
+comment1.target=BotnetServerThread(java.net.Socket)
+comment2.params=
+comment2.target=CommandQueue\ returnQueue()
+comment3.params=queue
+comment3.target=void\ updateQueue(CommandQueue)
+comment4.params=
+comment4.target=void\ processQueue()
+comment4.text=\r\n\ processQueue\:\ method\ used\ to\ process\ the\ queue\ contained\ within\ the\ server\ thread\r\n\ takes\ out\ the\ first\ command\ from\ the\ queue,\ sends\ it\ to\ the\ client\ for\ processing,\ reads\ it\ back,\ and\ adds\ it\ back\ to\ the\ queue\r\n
+comment5.params=command
+comment5.target=void\ run(CommandQueue)
+numComments=6

@@ -1,7 +1,8 @@
 #BlueJ class context
 comment0.target=CommandProtocol
+comment0.text=\r\n\ CommandProtocol\ Class\:\r\n\ Object\ used\ to\ process\ commands\ on\ the\ client\ side,\ manipulate\ command\ and\ return\ an\ output\r\n
 comment1.params=command
-comment1.target=java.lang.String\ processCommand(Command)
+comment1.target=void\ processCommand(Command)
 comment1.text=\r\n\ processCommand\ -\ run\ the\ command\ of\ the\ input\ and\ mutate\ the\ commands\ response\r\n\ @param\ command\ -\ the\ command\ to\ process\r\n\ @return\ -\ the\ mutated\ command\ \r\n
 comment2.params=appName
 comment2.target=boolean\ openApp(java.lang.String)

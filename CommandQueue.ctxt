@@ -1,7 +1,19 @@
 #BlueJ class context
 comment0.target=CommandQueue
+comment0.text=\r\n\ CommandQueue\ class\:\r\n\ class\ used\ to\ store\ commands,\ is\ shared\ by\ all\ threads\r\n
 comment1.params=
 comment1.target=Command\ take()
+comment1.text=\r\n\ take\:\ method\ used\ to\ get\ the\ first\ item\ from\ the\ queue\r\n\ if\ there\ is\ nothing\ in\ the\ queue\ then\ the\ thread\ will\ wait\r\n\ if\ the\ first\ command\ is\ finished\ it\ will\ remove\ it\ from\ the\ queue\r\n\ @return\:\ the\ first\ command\ in\ the\ list\r\n
 comment2.params=command
 comment2.target=void\ put(Command)
-numComments=3
+comment2.text=\r\n\ put\:\ method\ used\ to\ add\ a\ command\ to\ the\ queue\r\n\ @param\ command\:\ command\ to\ add\ to\ the\ queue\r\n
+comment3.params=command
+comment3.target=void\ putBack(Command)
+comment3.text=\r\n\ putBack\:\ method\ used\ to\ put\ the\ command\ back\ in\ the\ front\ of\ queue\r\n\ @param\ command\ the\ command\ to\ put\ back\ in\ the\ front\ of\ the\ queue\r\n
+comment4.params=
+comment4.target=void\ status_of_queue()
+comment4.text=\r\n\ status_of_queue\:\ method\ used\ to\ look\ at\ the\ name,\ current\ life,\ and\ finished\ status\ of\ the\ commands\ in\ the\ queue\r\n
+comment5.params=
+comment5.target=Command\ peek()
+comment5.text=\r\n\ peek\:\ method\ used\ to\ look\ at\ the\ first\ item\ in\ the\ list\ without\ removing\ it\r\n\ @return\:\ first\ item\ in\ the\ list\ without\ removing\ it\r\n
+numComments=6

@@ -1,5 +1,6 @@
 #BlueJ class context
 comment0.target=BotnetClient
+comment0.text=\r\n\ BotnetClient\ Class\:\r\n\ Object\ used\ to\ receive\ commands\ from\ server,\ process\ them,\ and\ send\ back\ to\ server\r\n
 comment1.params=args
 comment1.target=void\ main(java.lang.String[])
 numComments=2

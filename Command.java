@@ -84,8 +84,6 @@ public class Command implements Serializable{
     public void setIsFinishedFalse(){
         this.finished=false;
     }
-
-
     public void setMaxLife(int life){
         this.maxLife = life;
     }

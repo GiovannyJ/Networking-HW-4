@@ -9,7 +9,7 @@ client:
 rc:
 	java -cp . .\BotnetClient.java localhost 2002
 
-rc1:
+runclient1:
 	java -cp . .\BotnetClient.java localhost 2002
 
 e: server client

